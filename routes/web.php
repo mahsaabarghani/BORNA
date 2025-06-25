@@ -1,20 +1,28 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\ShopperController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', [\App\Http\Controllers\MainPgae::class, 'index']);
+
+Route::middleware(['auth', 'role:superadmin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [AdminController::class,'index'])->name('admin.dashboard');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::middleware(['auth', 'role:manager'])->prefix('manager')->group(function () {
+    Route::get('/dashboard', [ManagerController::class,'index'])->name('manager.dashboard');
 });
+
+Route::middleware(['auth', 'role:shop_owner'])->prefix('shop')->group(function () {
+    Route::get('/dashboard', [ShopperController::class,'index'])->name('shop.dashboard');
+});
+
+Route::middleware(['auth'])->prefix('user')->group(function () {
+    Route::get('/dashboard', [UserController::class,'index'])->name('user.dashboard');
+});
+
 
 require __DIR__.'/auth.php';
