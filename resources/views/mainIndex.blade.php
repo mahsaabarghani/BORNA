@@ -77,7 +77,11 @@
                     <i class="bi bi-list mobile-nav-toggle"></i>
                 </nav><!-- .navbar -->
 
-                <a href="#about" class="get-started-btn scrollto">Get Started</a>
+                <div class="get-started-btn scrollto">
+                    @if (Route::has('login'))
+                        <livewire:welcome.navigation />
+                    @endif
+                </div>
             </div>
         </div>
 
