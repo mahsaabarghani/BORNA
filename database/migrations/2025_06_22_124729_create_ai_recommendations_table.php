@@ -11,15 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notices', function (Blueprint $table) {
+        Schema::create('ai_recommendations', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('content');
-            $table->enum('target_audience',['all','shop_owners','managers','users'])->default('all');
-            $table->foreignId('complex_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('user_id')->constrained();
+            $table->string('type'); // product, store, etc.
+            $table->unsignedBigInteger('recommended_id');
             $table->timestamps();
+            $table->softDeletes();
         });
-
     }
 
     /**
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notices');
+        Schema::dropIfExists('ai_recommendations');
     }
 };

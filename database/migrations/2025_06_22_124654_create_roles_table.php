@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('shop_services', function (Blueprint $table) {
+        Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('shop_id')->constrained()->cascadeOnDelete();
-            $table->string('title');
-            $table->text('description')->nullable();
+            $table->string('name');
             $table->timestamps();
+            $table->softDeletes();
         });
-
     }
 
     /**
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('shop_services');
+        Schema::dropIfExists('roles');
     }
 };

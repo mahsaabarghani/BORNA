@@ -11,16 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('complexes', function (Blueprint $table) {
+        Schema::create('store_analytics', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('address');
-            $table->string('city');
-            $table->text('description')->nullable();
-            $table->foreignId('manager_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('store_id')->constrained();
+            $table->integer('views')->default(0);
+            $table->integer('clicks')->default(0);
+            $table->json('heatmap_data')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
-
     }
 
     /**
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('complexes');
+        Schema::dropIfExists('store_analytics');
     }
 };
