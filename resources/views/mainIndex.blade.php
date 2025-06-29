@@ -12,6 +12,9 @@
     <!-- Favicons -->
     <link href="assets/img/favicon.png" rel="icon">
     <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <!-- Icons (برای آیکون موقعیت یا چیزهای دیگر) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
@@ -47,36 +50,38 @@
                 <h1 class="logo me-auto me-lg-0"><a href="index.html">MALLIO</a></h1>
                 <!-- Uncomment below if you prefer to use an image logo -->
                 <!-- <a href="index.html" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+                <nav class="navbar navbar-expand-lg py-2 shadow-sm" dir="rtl">
+                    <div class="container-xl">
+                        <!-- فرم جست‌وجو + استان / شهر -->
+                        <form class="d-flex align-items-center flex-grow-1 mx-auto search-box" role="search" onsubmit="return false">
 
-                <nav id="navbar" class="navbar order-last order-lg-0">
-                    <ul>
-                        <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
-                        <li><a class="nav-link scrollto" href="#about">About</a></li>
-                        <li><a class="nav-link scrollto" href="#services">Services</a></li>
-                        <li><a class="nav-link scrollto " href="#portfolio">Portfolio</a></li>
-                        <li><a class="nav-link scrollto" href="#pricing">Pricing</a></li>
-                        <li class="dropdown"><a href="#"><span>Drop Down</span> <i class="bi bi-chevron-down"></i></a>
-                            <ul>
-                                <li><a href="#">Drop Down 1</a></li>
-                                <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-right"></i></a>
-                                    <ul>
-                                        <li><a href="#">Deep Drop Down 1</a></li>
-                                        <li><a href="#">Deep Drop Down 2</a></li>
-                                        <li><a href="#">Deep Drop Down 3</a></li>
-                                        <li><a href="#">Deep Drop Down 4</a></li>
-                                        <li><a href="#">Deep Drop Down 5</a></li>
-                                    </ul>
-                                </li>
-                                <li><a href="#">Drop Down 2</a></li>
-                                <li><a href="#">Drop Down 3</a></li>
-                                <li><a href="#">Drop Down 4</a></li>
-                            </ul>
-                        </li>
-                        <li><a class="nav-link scrollto" href="#contact">Contact</a></li>
-                    </ul>
-                    <i class="bi bi-list mobile-nav-toggle"></i>
-                </nav><!-- .navbar -->
+                            <!-- اینپوت جست‌وجو -->
+                            <input class="form-control flex-grow-1" type="search" placeholder="دنبال چه هستید؟" aria-label="Search">
 
+                            <!-- خط جداکننده -->
+                            <span class="search-divider mx-2 d-none d-lg-block"></span>
+
+                            <!-- ▼ انتخاب استان -->
+                            <!-- ▼ استان -->
+                            <div class="dropdown me-2">
+                                <button id="provinceBtn" class="btn dropdown-toggle px-4 text-secondary"
+                                        data-bs-toggle="dropdown" aria-expanded="false">استان</button>
+                                <ul class="dropdown-menu" id="provinceMenu"></ul>
+                            </div>
+
+                            <!-- ▼ انتخاب شهر -->
+                            <div class="dropdown">
+                                <button id="cityBtn" class="btn dropdown-toggle px-4 text-secondary"
+                                        data-bs-toggle="dropdown" aria-expanded="false" disabled>شهر</button>
+                                <ul class="dropdown-menu" id="cityMenu"></ul>
+                            </div>
+
+                            <!-- دکمه سرچ -->
+                            <button class="btn btn-success search-btn ms-2" type="submit">جستجو</button>
+                        </form>
+
+                    </div>
+                </nav>
                 <div class="get-started-btn scrollto">
                     @if (Route::has('login'))
                         <livewire:welcome.navigation />
@@ -695,7 +700,89 @@
 
 <!-- Template Main JS File -->
 <script src="assets/js/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+<script>
+    /* ---------- دادهٔ ثابت: ۳۱ استان + چند شهر شاخص ---------- */
+    const provinces = {
+        "آذربایجان شرقی":      ["تبریز","مراغه","مرند","جلفا"],
+        "آذربایجان غربی":      ["ارومیه","خوی","میاندوآب","بوکان"],
+        "اردبیل":              ["اردبیل","مشکین‌شهر","پارس‌آباد","خلخال"],
+        "اصفهان":              ["اصفهان","کاشان","خمینی‌شهر","نجف‌آباد"],
+        "البرز":               ["کرج","فردیس","ساوجبلاغ","نظرآباد"],
+        "ایلام":               ["ایلام","دهلران","دره‌شهر","آبدانان"],
+        "بوشهر":               ["بوشهر","برازجان","کنگان","گناوه"],
+        "تهران":               ["تهران","اسلام‌شهر","ری","ورامین"],
+        "چهارمحال و بختیاری":  ["شهرکرد","بروجن","فارسان","لردگان"],
+        "خراسان جنوبی":        ["بیرجند","قائن","طبس","فردوس"],
+        "خراسان رضوی":         ["مشهد","نیشابور","سبزوار","تربت‌حیدریه"],
+        "خراسان شمالی":        ["بجنورد","شیروان","اسفراین","آشخانه"],
+        "خوزستان":             ["اهواز","آبادان","خرمشهر","دزفول"],
+        "زنجان":               ["زنجان","ابهر","خرمدره","ماه‌نشان"],
+        "سمنان":               ["سمنان","شاهرود","دامغان","گرمسار"],
+        "سیستان و بلوچستان":   ["زاهدان","زابل","چابهار","ایرانشهر"],
+        "فارس":                ["شیراز","مرودشت","کازرون","لار"],
+        "قزوین":               ["قزوین","تاکستان","آبیک","بوئین‌زهرا"],
+        "قم":                  ["قم","جعفریه","دستجرد"],
+        "کردستان":            ["سنندج","سقز","مریوان","بانه"],
+        "کرمان":              ["کرمان","سیرجان","رفسنجان","جیرفت"],
+        "کرمانشاه":           ["کرمانشاه","اسلام‌آبادغرب","سنقر","قصرشیرین"],
+        "کهگیلویه و بویراحمد": ["یاسوج","دوگنبدان","دهدشت","سی‌سخت"],
+        "گلستان":             ["گرگان","گنبدکاووس","علی‌آبادکتول","بندرترکمن"],
+        "گیلان":              ["رشت","انزلی","لاهیجان","رودسر"],
+        "لرستان":             ["خرم‌آباد","بروجرد","دورود","الیگودرز"],
+        "مازندران":           ["ساری","بابل","قائم‌شهر","آمل"],
+        "مرکزی":              ["اراک","ساوه","خمین","دلیجان"],
+        "هرمزگان":            ["بندرعباس","میناب","بندرلنگه","قشم"],
+        "همدان":              ["همدان","ملایر","نهاوند","تویسرکان"],
+        "یزد":                 ["یزد","میبد","اردکان","بافق"]
+    };
+
+    /* ---------- المان‌ها ---------- */
+    const provinceMenu = document.getElementById('provinceMenu');
+    const cityMenu     = document.getElementById('cityMenu');
+    const provinceBtn  = document.getElementById('provinceBtn');
+    const cityBtn      = document.getElementById('cityBtn');
+
+    /* ---------- پرکردن لیست استان‌ها ---------- */
+    Object.keys(provinces).forEach(p=>{
+        provinceMenu.insertAdjacentHTML(
+            'beforeend',
+            `<li><a href="#" class="dropdown-item" data-prov="${p}">${p}</a></li>`
+        );
+    });
+
+    /* ---------- انتخاب استان ---------- */
+    provinceMenu.addEventListener('click', e=>{
+        if(!e.target.matches('.dropdown-item')) return;
+        e.preventDefault();
+
+        const prov = e.target.dataset.prov;
+        provinceBtn.textContent = prov;
+        provinceBtn.classList.add('active','text-dark');
+
+        // شهرهای آن استان
+        const cities = provinces[prov];
+        cityMenu.innerHTML = '';
+        cities.forEach(c=>{
+            cityMenu.insertAdjacentHTML(
+                'beforeend',
+                `<li><a href="#" class="dropdown-item" data-city="${c}">${c}</a></li>`
+            );
+        });
+        cityBtn.textContent = 'شهر';
+        cityBtn.disabled = false;
+        cityBtn.classList.remove('active','text-dark');
+    });
+
+    /* ---------- انتخاب شهر ---------- */
+    cityMenu.addEventListener('click', e=>{
+        if(!e.target.matches('.dropdown-item')) return;
+        e.preventDefault();
+        cityBtn.textContent = e.target.dataset.city;
+        cityBtn.classList.add('active','text-dark');
+    });
+</script>
 </body>
 
 </html>
