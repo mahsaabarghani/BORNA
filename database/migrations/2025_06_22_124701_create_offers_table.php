@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('store_id')->constrained();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->timestamp('start_date');
-            $table->timestamp('end_date');
+            $table->timestamp('start_date')->nullable();
+            $table->timestamp('end_date')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
